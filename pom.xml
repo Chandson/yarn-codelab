@@ -16,6 +16,7 @@
     <module>SimpleMRAppMasterTest</module>
     <module>yarn-app-report</module>
     <module>zkClient</module>
+    <module>common-util</module>
   </modules>
 
   <build>
