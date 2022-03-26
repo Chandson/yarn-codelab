@@ -55,6 +55,8 @@ public class AuthMain {
         sc.evaluateChallenge(challenge);
 
         System.out.println("step5");
+        // https://www.baeldung.com/java-sasl
+        // Read source code here, you can understand why two challenges are needed.
         if (ss.isComplete()) {
             System.out.println("auth success");
             System.out.println(ss.getMechanismName());

@@ -37,12 +37,13 @@
  * maintenance of any nuclear facility.
  */
 
-package sample;
+package jass;
 
 import java.io.*;
+import java.security.PrivilegedAction;
 import java.util.*;
+import javax.security.auth.Subject;
 import javax.security.auth.login.*;
-import javax.security.auth.*;
 import javax.security.auth.callback.*;
 
 /**
@@ -92,7 +93,7 @@ public class SampleAcn {
             } catch (LoginException le) {
 
                 System.err.println("Authentication failed:");
-                System.err.println("  " + le.getMessage());
+                System.err.println("  " + le);
                 try {
                     Thread.currentThread().sleep(3000);
                 } catch (Exception e) {
@@ -109,17 +110,25 @@ public class SampleAcn {
         }
 
         System.out.println("Authentication succeeded!");
+        Subject.doAs(lc.getSubject(), (PrivilegedAction<Object>) () -> {
+            File f = new File("common-util/src/main/resources/sampleacn.policy");
+            System.out.print("common-util/src/main/resources/sampleacn.policy");
 
+            if (!f.exists()) {
+                System.out.print(" not");
+            }
+            System.out.println(" exist in the current working directory.");
+            return null;
+        });
     }
 }
-
 
 /**
  * The application implements the CallbackHandler.
  *
  * <p> This application is text-based.  Therefore it displays information
- * to the user using the OutputStreams System.out and System.err,
- * and gathers input from the user using the InputStream System.in.
+ * to the user using the OutputStreams System.out and System.err, and gathers
+ * input from the user using the InputStream System.in.
  */
 class MyCallbackHandler implements CallbackHandler {
 
@@ -131,24 +140,24 @@ class MyCallbackHandler implements CallbackHandler {
      * @param callbacks an array of <code>Callback</code> objects which contain
      *                  the information requested by an underlying security
      *                  service to be retrieved or displayed.
-     *
-     * @exception java.io.IOException if an input or output error occurs. <p>
-     *
-     * @exception UnsupportedCallbackException if the implementation of this
-     *                  method does not support one or more of the Callbacks
-     *                  specified in the <code>callbacks</code> parameter.
+     * @throws java.io.IOException          if an input or output error occurs.
+     *                                      <p>
+     * @throws UnsupportedCallbackException if the implementation of this method
+     *                                      does not support one or more of the
+     *                                      Callbacks specified in the
+     *                                      <code>callbacks</code> parameter.
      */
     public void handle(Callback[] callbacks)
         throws IOException, UnsupportedCallbackException {
         System.out.println(callbacks.length);
-        for(int i=0; i < callbacks.length; i++) {
+        for (int i = 0; i < callbacks.length; i++) {
             System.out.println(callbacks[i]);
         }
         for (int i = 0; i < callbacks.length; i++) {
             if (callbacks[i] instanceof TextOutputCallback) {
 
                 // display the message according to the specified type
-                TextOutputCallback toc = (TextOutputCallback)callbacks[i];
+                TextOutputCallback toc = (TextOutputCallback) callbacks[i];
                 switch (toc.getMessageType()) {
                     case TextOutputCallback.INFORMATION:
                         System.out.println(toc.getMessage());
@@ -167,7 +176,7 @@ class MyCallbackHandler implements CallbackHandler {
             } else if (callbacks[i] instanceof NameCallback) {
 
                 // prompt the user for a username
-                NameCallback nc = (NameCallback)callbacks[i];
+                NameCallback nc = (NameCallback) callbacks[i];
 
                 System.err.print(nc.getPrompt());
                 System.err.flush();
@@ -177,7 +186,7 @@ class MyCallbackHandler implements CallbackHandler {
             } else if (callbacks[i] instanceof PasswordCallback) {
 
                 // prompt the user for sensitive information
-                PasswordCallback pc = (PasswordCallback)callbacks[i];
+                PasswordCallback pc = (PasswordCallback) callbacks[i];
                 System.err.print(pc.getPrompt());
                 System.err.flush();
                 pc.setPassword(readPassword(System.in));
@@ -202,7 +211,8 @@ class MyCallbackHandler implements CallbackHandler {
         int offset = 0;
         int c;
 
-        loop:   while (true) {
+        loop:
+        while (true) {
             switch (c = in.read()) {
                 case -1:
                 case '\n':
@@ -214,9 +224,10 @@ class MyCallbackHandler implements CallbackHandler {
                         if (!(in instanceof PushbackInputStream)) {
                             in = new PushbackInputStream(in);
                         }
-                        ((PushbackInputStream)in).unread(c2);
-                    } else
+                        ((PushbackInputStream) in).unread(c2);
+                    } else {
                         break loop;
+                    }
 
                 default:
                     if (--room < 0) {

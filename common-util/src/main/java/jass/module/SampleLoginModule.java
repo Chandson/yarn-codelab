@@ -37,15 +37,14 @@
  * maintenance of any nuclear facility.
  */
 
-package sample.module;
+package jass.module;
 
 import java.util.*;
-import java.io.IOException;
 import javax.security.auth.*;
 import javax.security.auth.callback.*;
 import javax.security.auth.login.*;
 import javax.security.auth.spi.*;
-import sample.principal.SamplePrincipal;
+import jass.principal.SamplePrincipal;
 
 /**
  * <p> This sample LoginModule authenticates users with a password.

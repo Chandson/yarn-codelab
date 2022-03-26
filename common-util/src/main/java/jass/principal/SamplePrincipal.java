@@ -37,7 +37,7 @@
  * maintenance of any nuclear facility.
  */
 
-package sample.principal;
+package jass.principal;
 
 import java.security.Principal;
 
