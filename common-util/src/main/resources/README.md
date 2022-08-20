@@ -1,5 +1,5 @@
 ## 用法
-### SampleAcn 启动
+### jass.SampleAcn 启动
 ```
 -Djava.security.auth.login.config==common-util/src/main/resources/sample_jaas.config
  -Djava.security.manager -Djava.security.policy==common-util/src/main/resources/sampleacn.policy
